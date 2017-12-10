@@ -1,13 +1,36 @@
 package iosr.facebookapp.stats.controller.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import java.util.Date;
+
 public class PostDTO {
     private Integer id;
 
-    private Integer likesCount;
+    private String postId;
 
-    private Integer commentsCount;
+    private Integer likes;
 
-    private Integer sharesCount;
+    private Integer comments;
+
+    private Integer shares;
+
+    private String link;
+
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss.SSS")
+    private Date createdTime;
+
+    public PostDTO() {}
+
+    public PostDTO(Integer id, String postId, Integer likes, Integer comments, Integer shares, String link, Date createdTime) {
+        this.id = id;
+        this.postId = postId;
+        this.likes = likes;
+        this.comments = comments;
+        this.shares = shares;
+        this.link = link;
+        this.createdTime = createdTime;
+    }
 
     public Integer getId() {
         return id;
@@ -17,27 +40,51 @@ public class PostDTO {
         this.id = id;
     }
 
-    public Integer getLikesCount() {
-        return likesCount;
+    public Integer getLikes() {
+        return likes;
     }
 
-    public void setLikesCount(Integer likesCount) {
-        this.likesCount = likesCount;
+    public void setLikes(Integer likes) {
+        this.likes = likes;
     }
 
-    public Integer getCommentsCount() {
-        return commentsCount;
+    public Integer getComments() {
+        return comments;
     }
 
-    public void setCommentsCount(Integer commentsCount) {
-        this.commentsCount = commentsCount;
+    public void setComments(Integer comments) {
+        this.comments = comments;
     }
 
-    public Integer getSharesCount() {
-        return sharesCount;
+    public Integer getShares() {
+        return shares;
     }
 
-    public void setSharesCount(Integer sharesCount) {
-        this.sharesCount = sharesCount;
+    public void setShares(Integer shares) {
+        this.shares = shares;
+    }
+
+    public Date getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public String getPostId() {
+        return postId;
+    }
+
+    public void setPostId(String postId) {
+        this.postId = postId;
     }
 }
