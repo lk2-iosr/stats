@@ -23,15 +23,17 @@ public class MessageService {
     public void updatePost(String requestJSON) throws IOException, ParseException {
         log.info("Received: \n" + requestJSON);
         SqsMessage sqsMessage = SqsMessage.fromJSON(requestJSON);
-        processMessage(sqsMessage);
+        log.info(sqsMessage.getMessage());
+        PostMessage postMessage = PostMessage.fromJSON(sqsMessage.getMessage());
+        processMessage(postMessage);
     }
 
-    private void processMessage(SqsMessage sqsMessage) throws ParseException {
-        Post post = postFromSqsMessage(sqsMessage);
+    private void processMessage(PostMessage postMessage) throws ParseException {
+        Post post = postFromSqsMessage(postMessage);
         postRepository.save(post);
     }
 
-    private Post postFromSqsMessage(SqsMessage sqsMessage) throws ParseException {
-        return new Post(sqsMessage.getId(), sqsMessage.getLikes(), sqsMessage.getComments(), sqsMessage.getShares(), sqsMessage.getLink(), sqsMessage.getCreatedTimeDate());
+    private Post postFromSqsMessage(PostMessage postMessage) throws ParseException {
+        return new Post(postMessage.getId(), postMessage.getLikes(), postMessage.getComments(), postMessage.getShares(), postMessage.getLink(), postMessage.getCreatedTimeDate());
     }
 }
