@@ -24,7 +24,7 @@ public class JmsConfig {
     private SQSConnectionFactory connectionFactory = new SQSConnectionFactory(
             new ProviderConfiguration(),
             AmazonSQSClientBuilder.standard()
-                    .withRegion(String.valueOf(Region.getRegion(Regions.US_EAST_2)))
+                    .withRegion(String.valueOf(Region.getRegion(Regions.EU_WEST_1)))
                     .withCredentials(credentialsProvider)
     );
 
