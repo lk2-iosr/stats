@@ -6,7 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.Date;
 import java.util.List;
 
-public interface PostRepository extends CrudRepository<Post, Integer> {
+public interface PostRepository extends CrudRepository<Post, String> {
 
     List<Post> findTop10ByCreatedTimeAfterOrderByLikesDesc(Date date);
 
