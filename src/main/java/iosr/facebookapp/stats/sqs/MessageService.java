@@ -1,6 +1,8 @@
 package iosr.facebookapp.stats.sqs;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import iosr.facebookapp.stats.entity.Post;
+import iosr.facebookapp.stats.logging.UpdatePostTimeLog;
 import iosr.facebookapp.stats.repository.PostRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,16 +18,20 @@ public class MessageService {
 
     private Logger log = LoggerFactory.getLogger(MessageService.class);
 
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
     @Autowired
     PostRepository postRepository;
 
     @JmsListener(destination = "${aws.sqs.queue.name}")
     public void updatePost(String requestJSON) throws IOException, ParseException {
-        log.info("Received: \n" + requestJSON);
+        long start = System.currentTimeMillis();
         SqsMessage sqsMessage = SqsMessage.fromJSON(requestJSON);
-        log.info(sqsMessage.getMessage());
         PostMessage postMessage = PostMessage.fromJSON(sqsMessage.getMessage());
         processMessage(postMessage);
+        long end = System.currentTimeMillis();
+        UpdatePostTimeLog updatePostTimeLog = new UpdatePostTimeLog(end - start);
+        log.info(OBJECT_MAPPER.writeValueAsString(updatePostTimeLog));
     }
 
     private void processMessage(PostMessage postMessage) throws ParseException {

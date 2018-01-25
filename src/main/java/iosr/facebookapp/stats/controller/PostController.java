@@ -1,8 +1,15 @@
 package iosr.facebookapp.stats.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import iosr.facebookapp.stats.controller.dto.PostDTO;
 import iosr.facebookapp.stats.entity.Post;
+import iosr.facebookapp.stats.logging.GetRankingTimeLog;
+import iosr.facebookapp.stats.logging.SavePostTimeLog;
 import iosr.facebookapp.stats.repository.PostRepository;
+import iosr.facebookapp.stats.sqs.MessageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,15 +27,23 @@ import java.util.List;
 @RequestMapping(path="/posts")
 public class PostController {
 
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
+    private Logger log = LoggerFactory.getLogger(PostController.class);
+
     private static final int HOURS_RANGE = 8;
 
     @Autowired
     private PostRepository postRepository;
 
     @RequestMapping(method = RequestMethod.POST, value = "/add")
-    public ResponseEntity<?> addPost(@RequestBody PostDTO post) {
+    public ResponseEntity<?> addPost(@RequestBody PostDTO post) throws JsonProcessingException {
         Post created = new Post(post.getPostId(), post.getLikes(), post.getComments(), post.getShares(), post.getLink(), post.getCreatedTime());
+        long start = System.currentTimeMillis();
         created = postRepository.save(created);
+        long end = System.currentTimeMillis();
+        SavePostTimeLog savePostTimeLog = new SavePostTimeLog(end - start);
+        log.info(OBJECT_MAPPER.writeValueAsString(savePostTimeLog));
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
@@ -38,20 +53,32 @@ public class PostController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/topByLikes")
-    public ResponseEntity<?> getTopPostsByLikes() {
+    public ResponseEntity<?> getTopPostsByLikes() throws JsonProcessingException {
+        long start = System.currentTimeMillis();
         List<Post> ranking = postRepository.findTop10ByCreatedTimeAfterOrderByLikesDesc(getRestrainingDate());
+        long end = System.currentTimeMillis();
+        GetRankingTimeLog getRankingTimeLog = new GetRankingTimeLog(end - start);
+        log.info(OBJECT_MAPPER.writeValueAsString(getRankingTimeLog));
         return new ResponseEntity<>(ranking, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/topByShares")
-    public ResponseEntity<?> getTopPostsByShares() {
+    public ResponseEntity<?> getTopPostsByShares() throws JsonProcessingException {
+        long start = System.currentTimeMillis();
         List<Post> ranking = postRepository.findTop10ByCreatedTimeAfterOrderBySharesDesc(getRestrainingDate());
+        long end = System.currentTimeMillis();
+        GetRankingTimeLog getRankingTimeLog = new GetRankingTimeLog(end - start);
+        log.info(OBJECT_MAPPER.writeValueAsString(getRankingTimeLog));
         return new ResponseEntity<>(ranking, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/topByComments")
-    public ResponseEntity<?> getTopPostsByComments() {
+    public ResponseEntity<?> getTopPostsByComments() throws JsonProcessingException {
+        long start = System.currentTimeMillis();
         List<Post> ranking = postRepository.findTop10ByCreatedTimeAfterOrderByCommentsDesc(getRestrainingDate());
+        long end = System.currentTimeMillis();
+        GetRankingTimeLog getRankingTimeLog = new GetRankingTimeLog(end - start);
+        log.info(OBJECT_MAPPER.writeValueAsString(getRankingTimeLog));
         return new ResponseEntity<>(ranking, HttpStatus.OK);
     }
 
