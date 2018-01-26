@@ -1,6 +1,8 @@
 <configuration>
     <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+        <encoder>
+            <pattern>{"message":%msg}%n</pattern>
+        </encoder>
     </appender>
     <logger name="jsonLogger" additivity="false" level="DEBUG">
         <appender-ref ref="consoleAppender"/>
