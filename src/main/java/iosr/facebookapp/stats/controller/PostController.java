@@ -4,10 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import iosr.facebookapp.stats.controller.dto.PostDTO;
 import iosr.facebookapp.stats.entity.Post;
-import iosr.facebookapp.stats.logging.GetRankingTimeLog;
-import iosr.facebookapp.stats.logging.SavePostTimeLog;
+import iosr.facebookapp.stats.logging.Log;
+import iosr.facebookapp.stats.logging.TimeLog;
 import iosr.facebookapp.stats.repository.PostRepository;
-import iosr.facebookapp.stats.sqs.MessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +41,7 @@ public class PostController {
         long start = System.currentTimeMillis();
         created = postRepository.save(created);
         long end = System.currentTimeMillis();
-        SavePostTimeLog savePostTimeLog = new SavePostTimeLog(end - start);
-        log.info(OBJECT_MAPPER.writeValueAsString(savePostTimeLog));
+        log.info(Log.getLog(new TimeLog("savePost", end - start)));
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
@@ -57,8 +55,7 @@ public class PostController {
         long start = System.currentTimeMillis();
         List<Post> ranking = postRepository.findTop10ByCreatedTimeAfterOrderByLikesDesc(getRestrainingDate());
         long end = System.currentTimeMillis();
-        GetRankingTimeLog getRankingTimeLog = new GetRankingTimeLog(end - start);
-        log.info(OBJECT_MAPPER.writeValueAsString(getRankingTimeLog));
+        log.info(Log.getLog(new TimeLog("getRankingByLikes", end - start)));
         return new ResponseEntity<>(ranking, HttpStatus.OK);
     }
 
@@ -67,8 +64,7 @@ public class PostController {
         long start = System.currentTimeMillis();
         List<Post> ranking = postRepository.findTop10ByCreatedTimeAfterOrderBySharesDesc(getRestrainingDate());
         long end = System.currentTimeMillis();
-        GetRankingTimeLog getRankingTimeLog = new GetRankingTimeLog(end - start);
-        log.info(OBJECT_MAPPER.writeValueAsString(getRankingTimeLog));
+        log.info(Log.getLog(new TimeLog("getRankingByShares", end - start)));
         return new ResponseEntity<>(ranking, HttpStatus.OK);
     }
 
@@ -77,8 +73,7 @@ public class PostController {
         long start = System.currentTimeMillis();
         List<Post> ranking = postRepository.findTop10ByCreatedTimeAfterOrderByCommentsDesc(getRestrainingDate());
         long end = System.currentTimeMillis();
-        GetRankingTimeLog getRankingTimeLog = new GetRankingTimeLog(end - start);
-        log.info(OBJECT_MAPPER.writeValueAsString(getRankingTimeLog));
+        log.info(Log.getLog(new TimeLog("getRankingByComments", end - start)));
         return new ResponseEntity<>(ranking, HttpStatus.OK);
     }
 

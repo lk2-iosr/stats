@@ -2,7 +2,8 @@ package iosr.facebookapp.stats.sqs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import iosr.facebookapp.stats.entity.Post;
-import iosr.facebookapp.stats.logging.UpdatePostTimeLog;
+import iosr.facebookapp.stats.logging.Log;
+import iosr.facebookapp.stats.logging.TimeLog;
 import iosr.facebookapp.stats.repository.PostRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +31,7 @@ public class MessageService {
         PostMessage postMessage = PostMessage.fromJSON(sqsMessage.getMessage());
         processMessage(postMessage);
         long end = System.currentTimeMillis();
-        UpdatePostTimeLog updatePostTimeLog = new UpdatePostTimeLog(end - start);
-        log.info(OBJECT_MAPPER.writeValueAsString(updatePostTimeLog));
+        log.info(Log.getLog(new TimeLog("updatePost", end - start)));
     }
 
     private void processMessage(PostMessage postMessage) throws ParseException {
